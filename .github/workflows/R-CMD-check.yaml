@@ -43,16 +43,11 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
       
-      - name: Install ggplot2 3.4.0
-        if: matrix.config.ggplot == '3.4.0'
-        run: |
-          install.packages("remotes")
-          remotes::install_version("ggplot2", "3.4.0", repos="https://cloud.r-project.org")
-        shell: Rscript {0}
-
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck
+          extra-packages:
+            any::rcmdcheck
+            ggplot2@${{ matrix.config.ggplot }}
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2
