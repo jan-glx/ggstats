@@ -20,13 +20,15 @@ jobs:
       fail-fast: false
       matrix:
         config:
+          # current ecosystem
+          - {os: macos-latest,   r: 'release', ggplot: '', snapshot: ''}
+          - {os: windows-latest, r: 'release', ggplot: '', snapshot: ''}
+          - {os: ubuntu-latest,  r: 'devel',   ggplot: '', snapshot: ''}
+          - {os: ubuntu-latest,  r: 'release', ggplot: '', snapshot: ''}
+          - {os: ubuntu-latest,  r: 'oldrel-1', ggplot: '', snapshot: ''}
 
-          - {os: macos-latest,   r: 'release', ggplot: ''}
-          - {os: windows-latest, r: 'release', ggplot: ''}
-          - {os: ubuntu-latest,  r: 'devel',   ggplot: '', http-user-agent: 'release'}
-          - {os: ubuntu-latest,  r: 'release', ggplot: ''}
-          - {os: ubuntu-latest,  r: 'oldrel-1', ggplot: ''}
-          - {os: ubuntu-latest,  r: '4.2', ggplot: '@3.4.0', rspm: '2023-03-01'}
+          # minimum supported ggplot test
+          - {os: ubuntu-latest, r: '4.3', ggplot: '@3.4.0', snapshot: '2023-03-01'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -40,16 +42,28 @@ jobs:
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
-          http-user-agent: ${{ matrix.config.http-user-agent }}
-          rspm-snapshot: ${{ matrix.config.rspm }}
           use-public-rspm: true
-      
+
+      # override RSPM to force historical CRAN snapshot
+      - name: Use CRAN snapshot
+        if: matrix.config.snapshot != ''
+        run: |
+          echo "RSPM=https://packagemanager.posit.co/cran/${{ matrix.config.snapshot }}" >> $GITHUB_ENV
+          echo "RENV_CONFIG_REPOS_OVERRIDE=https://packagemanager.posit.co/cran/${{ matrix.config.snapshot }}" >> $GITHUB_ENV
+
+      # debug step (optional but useful while tuning CI)
+      - name: Show repo configuration
+        run: |
+          echo "RSPM=$RSPM"
+          Rscript -e 'print(getOption("repos"))'
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages:
+          extra-packages: |
             any::rcmdcheck
             ggplot2${{ matrix.config.ggplot }}
           needs: check
+          lockfile: false
 
       - uses: r-lib/actions/check-r-package@v2
         with:
