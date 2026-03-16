@@ -14,7 +14,7 @@ jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
 
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }}, ggplot=${{ matrix.config.ggplot }})
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }}, ggplot${{ matrix.config.ggplot }})
 
     strategy:
       fail-fast: false
@@ -26,7 +26,7 @@ jobs:
           - {os: ubuntu-latest,  r: 'devel',   ggplot: '', http-user-agent: 'release'}
           - {os: ubuntu-latest,  r: 'release', ggplot: ''}
           - {os: ubuntu-latest,  r: 'oldrel-1', ggplot: ''}
-          - {os: ubuntu-latest,  r: '4.2', ggplot: '@v3.4.0'}
+          - {os: ubuntu-latest,  r: '4.2', ggplot: '@3.4.0'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
