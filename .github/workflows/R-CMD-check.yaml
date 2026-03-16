@@ -26,7 +26,7 @@ jobs:
           - {os: ubuntu-latest,  r: 'devel',   ggplot: 'latest', http-user-agent: 'release'}
           - {os: ubuntu-latest,  r: 'release', ggplot: 'latest'}
           - {os: ubuntu-latest,  r: 'oldrel-1', ggplot: 'latest'}
-          - {os: ubuntu-latest,  r: 'release', ggplot: '3.4.0'}
+          - {os: ubuntu-latest,  r: '4.2', ggplot: '3.4.0'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
